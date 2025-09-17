@@ -6,7 +6,11 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "vercel-build": "npm run build"
+  },
+  "engines": {
+    "node": ">=18 <21"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.3",
