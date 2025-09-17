@@ -45,7 +45,19 @@ import {
 } from '../components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 
-const mockTasks = {
+type Task = {
+  id: number;
+  title: string;
+  description: string;
+  priority: 'high' | 'medium' | 'low';
+  assignee: { name: string; avatar: string };
+  dueDate: string;
+  tags: string[];
+  attachments: number;
+  comments: number;
+};
+
+const mockTasks: Record<'todo' | 'in-progress' | 'review' | 'done', Task[]> = {
   'todo': [
     {
       id: 1,
@@ -125,10 +137,10 @@ const priorityColors = {
 };
 
 export default function TaskManagement() {
-  const [view, setView] = useState('kanban');
-  const [tasks, setTasks] = useState(mockTasks);
+  const [view, setView] = useState<'kanban' | 'list'>('kanban');
+  const [tasks, setTasks] = useState<Record<'todo' | 'in-progress' | 'review' | 'done', Task[]>>(mockTasks);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [newTask, setNewTask] = useState({
+  const [newTask, setNewTask] = useState<{ title: string; description: string; priority: 'low' | 'medium' | 'high'; assignee: string; dueDate: string; tags: string[]}>({
     title: '',
     description: '',
     priority: 'medium',
@@ -137,7 +149,7 @@ export default function TaskManagement() {
     tags: []
   });
 
-  const TaskCard = ({ task }: { task: any }) => (
+  const TaskCard = ({ task }: { task: Task }) => (
     <Card className="mb-3 cursor-pointer hover:shadow-md transition-shadow">
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-2">
@@ -283,7 +295,7 @@ export default function TaskManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h1>Tasks & Projects</h1>
-          <p className="text-muted-foreground">Manage your team's work and projects</p>
+          <p className="text-muted-foreground">Manage your team&apos;s work and projects</p>
         </div>
         
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
@@ -322,7 +334,7 @@ export default function TaskManagement() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="priority">Priority</Label>
-                  <Select value={newTask.priority} onValueChange={(value) => setNewTask({ ...newTask, priority: value })}>
+                  <Select value={newTask.priority} onValueChange={(value: 'low' | 'medium' | 'high') => setNewTask({ ...newTask, priority: value })}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -381,7 +393,7 @@ export default function TaskManagement() {
           Filter
         </Button>
 
-        <Tabs value={view} onValueChange={setView} className="w-auto">
+        <Tabs value={view} onValueChange={(value) => setView(value as 'kanban' | 'list')} className="w-auto">
           <TabsList>
             <TabsTrigger value="kanban" className="flex items-center gap-2">
               <LayoutGrid className="w-4 h-4" />

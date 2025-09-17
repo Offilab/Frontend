@@ -32,7 +32,7 @@ import {
 } from '../components/ui/dropdown-menu';
 import { Textarea } from '../components/ui/textarea';
 
-const mockChannels = [
+const mockChannels: { id: number; name: string; type: 'public' | 'private'; unread: number; members: number }[] = [
   { id: 1, name: 'general', type: 'public', unread: 0, members: 15 },
   { id: 2, name: 'project-alpha', type: 'public', unread: 3, members: 8 },
   { id: 3, name: 'design-team', type: 'private', unread: 1, members: 5 },
@@ -40,14 +40,14 @@ const mockChannels = [
   { id: 5, name: 'random', type: 'public', unread: 2, members: 12 },
 ];
 
-const mockDirectMessages = [
+const mockDirectMessages: { id: number; name: string; status: 'online' | 'in-meeting' | 'away'; unread: number; avatar: string }[] = [
   { id: 1, name: 'Sarah Chen', status: 'online', unread: 2, avatar: 'SC' },
   { id: 2, name: 'Mike Johnson', status: 'in-meeting', unread: 0, avatar: 'MJ' },
   { id: 3, name: 'Emily Davis', status: 'away', unread: 1, avatar: 'ED' },
   { id: 4, name: 'Alex Kumar', status: 'online', unread: 0, avatar: 'AK' },
 ];
 
-const mockMessages = [
+const mockMessages: { id: number; user: { name: string; avatar: string }; message: string; timestamp: string; reactions: { emoji: string; count: number }[] }[] = [
   {
     id: 1,
     user: { name: 'Sarah Chen', avatar: 'SC' },
@@ -96,9 +96,13 @@ const getStatusColor = (status: string) => {
   }
 };
 
+type Channel = { id: number; name: string; type: 'public' | 'private'; unread: number; members: number };
+type DirectMessage = { id: number; name: string; status: 'online' | 'in-meeting' | 'away'; unread: number; avatar: string };
+type Message = { id: number; user: { name: string; avatar: string }; message: string; timestamp: string; reactions: { emoji: string; count: number }[] };
+
 export default function ChatCommunication() {
-  const [selectedChannel, setSelectedChannel] = useState(mockChannels[0]);
-  const [selectedDM, setSelectedDM] = useState(null);
+  const [selectedChannel, setSelectedChannel] = useState<Channel | null>(mockChannels[0] as Channel);
+  const [selectedDM, setSelectedDM] = useState<DirectMessage | null>(null);
   const [messageInput, setMessageInput] = useState('');
   const [showPinned, setShowPinned] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -118,12 +122,12 @@ export default function ChatCommunication() {
   const isChannelSelected = selectedChannel && !selectedDM;
   const currentChat = selectedDM || selectedChannel;
 
-  const handleChatSelect = (type: 'channel' | 'dm', chat: any) => {
+  const handleChatSelect = (type: 'channel' | 'dm', chat: Channel | DirectMessage) => {
     if (type === 'channel') {
-      setSelectedChannel(chat);
+      setSelectedChannel(chat as Channel);
       setSelectedDM(null);
     } else {
-      setSelectedDM(chat);
+      setSelectedDM(chat as DirectMessage);
       setSelectedChannel(null);
     }
     
@@ -163,7 +167,7 @@ export default function ChatCommunication() {
                   key={channel.id}
                   onClick={() => handleChatSelect('channel', channel)}
                   className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-left transition-colors ${
-                    isChannelSelected && selectedChannel.id === channel.id
+                    isChannelSelected && selectedChannel?.id === channel.id
                       ? 'bg-accent text-accent-foreground'
                       : 'hover:bg-accent hover:text-accent-foreground'
                   }`}
@@ -254,14 +258,14 @@ export default function ChatCommunication() {
               </>
             ) : (
               <>
-                {selectedChannel.type === 'private' ? (
+                {selectedChannel?.type === 'private' ? (
                   <Lock className="w-5 h-5 text-muted-foreground" />
                 ) : (
                   <Hash className="w-5 h-5 text-muted-foreground" />
                 )}
                 <div>
-                  <h2 className="text-sm">{selectedChannel.name}</h2>
-                  <p className="text-xs text-muted-foreground">{selectedChannel.members} members</p>
+                  <h2 className="text-sm">{selectedChannel?.name}</h2>
+                  <p className="text-xs text-muted-foreground">{selectedChannel?.members} members</p>
                 </div>
               </>
             )}
@@ -380,7 +384,7 @@ export default function ChatCommunication() {
             </Button>
             <div className="flex-1">
               <Textarea
-                placeholder={`Message ${currentChat.name}...`}
+                placeholder={`Message ${currentChat?.name ?? ''}...`}
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
                 className="min-h-[40px] max-h-32 resize-none"

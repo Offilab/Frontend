@@ -45,7 +45,7 @@ import {
 } from '../components/ui/dropdown-menu';
 import { Label } from '../components/ui/label';
 
-const mockDocuments = [
+const mockDocuments: Document[] = [
   {
     id: 1,
     title: 'Project Requirements Document',
@@ -120,8 +120,16 @@ This document outlines the requirements for our upcoming project management plat
 ---
 *Last updated: December 12, 2024 by Sarah Chen*`;
 
+type Document = {
+  id: number;
+  title: string;
+  lastModified: string;
+  collaborators: { name: string; avatar: string }[];
+  status: 'active' | 'inactive';
+};
+
 export default function CollaborativeNotepad() {
-  const [selectedDocument, setSelectedDocument] = useState(mockDocuments[0]);
+  const [selectedDocument, setSelectedDocument] = useState<Document>(mockDocuments[0] as Document);
   const [content, setContent] = useState(sampleContent);
   const [isNewDocModalOpen, setIsNewDocModalOpen] = useState(false);
   const [isVersionHistoryOpen, setIsVersionHistoryOpen] = useState(false);
@@ -140,7 +148,7 @@ export default function CollaborativeNotepad() {
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
 
-  const handleDocumentSelect = (doc: any) => {
+  const handleDocumentSelect = (doc: Document) => {
     setSelectedDocument(doc);
     
     // On mobile, switch to document view when a document is selected
@@ -173,14 +181,13 @@ export default function CollaborativeNotepad() {
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
                 <Label htmlFor="title">Document Title</Label>
-                <input className='flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50' type="text" id='title' placeholder='Enter document title...' value={newDocTitle} onChange={(e)=>setNewDocTitle(e.target.value)} />
 
-                {/* <Input
+                <Input
                   id="title"
                   placeholder="Enter document title..."
                   value={newDocTitle}
                   onChange={(e) => setNewDocTitle(e.target.value)}
-                /> */}
+                />
               </div>
             </div>
             <DialogFooter>

@@ -111,7 +111,7 @@ export default function AttendanceHR() {
       {/* Today's Attendance */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Today's Attendance</CardTitle>
+          <CardTitle>Today&apos;s Attendance</CardTitle>
           <Button variant="outline" size="sm">
             <Download className="w-4 h-4 mr-2" />
             Export
