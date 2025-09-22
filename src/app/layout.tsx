@@ -1,7 +1,11 @@
+// src/app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import Header from "./header";
+import './index.css'
+import ClientLayout from "./clientLayout"; // ✅ wrapper
+import { AuthContextProvider } from "./context/authContext";
+
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -19,24 +23,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Header>
-          {children}
-          
-        </Header>
-        
-                        <main className="flex-1 overflow-auto p-3 md:p-6 bg-gradient-to-br from-background via-background to-blue-50/30">
-          <div className="animate-in slide-in-from-right-5 duration-300 max-w-full">
-
-          </div>
-        </main>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <AuthContextProvider>
+          <ClientLayout>
+            {children}
+          </ClientLayout>
+        </AuthContextProvider>
       </body>
     </html>
   );

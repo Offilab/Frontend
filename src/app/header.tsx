@@ -52,6 +52,19 @@ export default function App({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState<{ email: string; role: string; name: string } | null>(null);
+
+  const handleLogin = (userData: { email: string; role: string; name: string }) => {
+    setCurrentUser(userData);
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setCurrentUser(null);
+    setActiveTab('dashboard');    
+  };
   const [activeTab, setActiveTab] = useState('dashboard');
   const [darkMode, setDarkMode] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -245,7 +258,11 @@ export default function App({
               onClick={toggleDarkMode}
               className="p-2 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200"
             >
-              {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {darkMode ? (
+                <Sun className="w-4 h-4 text-gray-400 group-hover:text-orange-400 transition-colors" />
+              ) : (
+                <Moon className="w-4 h-4 text-gray-400 group-hover:text-blue-400 transition-colors" />
+              )}
             </Button>
 
             {/* Notifications */}
