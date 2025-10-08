@@ -25,6 +25,10 @@ import { Avatar, AvatarFallback, AvatarImage } from './components/ui/avatar';
 import { Badge } from './components/ui/badge';
 import { Sheet, SheetContent, SheetTrigger } from './components/ui/sheet';
 import { useRouter } from 'next/navigation';
+import { useSelector, useDispatch } from "react-redux";
+ // adjust path
+ import { RootState } from './configureStore';
+import { logout } from "./store/authSlice";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -37,7 +41,7 @@ import {
 import { ChildProcess } from 'child_process';
 
 const navigation = [
-  {href: "/", name: 'Dashboard', icon: Home, id: 'dashboard' },
+  {href: "/dashboard", name: 'Dashboard', icon: Home, id: 'dashboard' },
   {href: "/taskmanagement", name: 'Tasks & Projects', icon: CheckSquare, id: 'tasks' },
   {href: "/chat", name: 'Chat', icon: MessageSquare, id: 'chat', badge: 3 },
   {href: "/videoconferencing", name: 'Video Calls', icon: Video, id: 'video' },
@@ -52,6 +56,11 @@ export default function App({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { user, isAuth } = useSelector(
+    (state: RootState) => state.auth
+  );
+  const dispatch = useDispatch();
+  
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState<{ email: string; role: string; name: string } | null>(null);
 
@@ -61,9 +70,10 @@ export default function App({
   };
 
   const handleLogout = () => {
-    setIsAuthenticated(false);
-    setCurrentUser(null);
-    setActiveTab('dashboard');    
+    
+      dispatch(logout());
+      router.push("/");
+    
   };
   const [activeTab, setActiveTab] = useState('dashboard');
   const [darkMode, setDarkMode] = useState(false);
@@ -104,6 +114,7 @@ export default function App({
       setMobileMenuOpen(false);
     }
   };
+
 
 
 
@@ -295,7 +306,7 @@ export default function App({
                   Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-red-600 hover:bg-red-50 transition-colors">Log out</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout} className="text-red-600 hover:bg-red-50 transition-colors">Log out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
