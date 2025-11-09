@@ -143,15 +143,12 @@ const handleSendToReview = async (id: string) => {
       } satisfies Record<"InProgress" | "Review" | "Done", resTask[]>; // ✅ ensures exact type match
     });
 
-    alert("Task moved to Review!");
   } catch (err) {
     console.error(err);
     alert("Failed to update status");
   }
 };
-
-  useEffect(() => {
-    const loadTasks = async () => {
+   const loadTasks = async () => {
       try {
         const response = await fetchTasks();
         console.log('Fetched Tasks:', response.data.events);
@@ -172,11 +169,14 @@ const handleSendToReview = async (id: string) => {
       );
 
       setTasks(grouped)
+      
       } catch (error) {
         console.error("Error loading tasks:", error);
       } finally {
       }
     };
+
+  useEffect(() => {
 
     loadTasks();
   }, []);
@@ -203,8 +203,9 @@ const handleSendToReview = async (id: string) => {
 
     console.log ('Creating Task:', taskToCreate);
   const res= await createTask(taskToCreate);
-             
+  const refresh =await loadTasks();            
   console.log(tasks)
+  setNewTask({ title: '', description: '', priority: 'Medium', assigned_id: '', due_date: '' });
   }
 
   const TaskCard = ({ task }: { task: resTask }) => (

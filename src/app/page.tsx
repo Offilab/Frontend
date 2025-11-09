@@ -200,11 +200,11 @@ const handleLogin = async (e: React.FormEvent) => {
 
     
     if (result.success) {
-      console.log("✅ User created:", result.user);
-      const dataTransfer = dispatch(loginSuccess({ user: result.user }));
+      console.log("✅ User created:", result);
+      const dataTransfer = dispatch(loginSuccess({ user: result.data }));
       console.log(dataTransfer);
   
-        router.push("/");
+        router.push("/dashboard");
     } else {
       console.log("⚠️ Failed:", result.message);
     }
@@ -237,10 +237,10 @@ const handleLogin = async (e: React.FormEvent) => {
   };
 
   const roles = [
-    { id: "employee", name: "Employee", icon: Users },
-    { id: "techlead", name: "Tech Lead", icon: Settings },
-    { id: "manager", name: "Manager", icon: Crown },
-    { id: "hr", name: "HR Manager", icon: Briefcase },
+    { id: "Employee", name: "Employee", icon: Users },
+    { id: "TechLead", name: "Tech Lead", icon: Settings },
+    { id: "Manager", name: "Manager", icon: Crown },
+    { id: "HR_Manager", name: "HR Manager", icon: Briefcase },
   ];
 
   return (

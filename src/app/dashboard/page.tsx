@@ -94,7 +94,7 @@ useEffect(() => {
   if (!user) {
     return <div>Loading user...</div>;
   }
-console.log(user);
+// console.log(user);
   return (
     <div className="space-y-4 md:space-y-6">
       {/* Welcome Section */}

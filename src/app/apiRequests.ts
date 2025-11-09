@@ -79,7 +79,7 @@ export interface UserOnboard {
 export interface CreateUserResponse {
   message: string;
   success: boolean;
-  user: UserOnboard; // user may include an auto-generated id
+  data: UserOnboard; // user may include an auto-generated id
 }
 
 
@@ -132,6 +132,7 @@ const user: User = dbres.data.events[0];
 }
 export async function createUser(user: UserOnboarding): Promise<CreateUserResponse> {
   try {
+    console.log("Creating user:", user);
     const response = await fetch("http://localhost:3001/api/v1/users/create", {
       method: "POST",
       headers: {
@@ -145,6 +146,7 @@ export async function createUser(user: UserOnboarding): Promise<CreateUserRespon
     }
 
     const data=await response.json();
+    console.log("User created successfully:", data);
     return data;
   } catch (error) {
     console.error("Error creating user:", error);
@@ -212,6 +214,42 @@ export const updateTaskStatus = async (task_id: string, status: "Review" | "InPr
     return data; // returns APIResponse structure
   } catch (error) {
     console.error("Error updating task status:", error);
+    throw error;
+  }
+};
+export const createLeaveRequest = async (data: {
+  user_id: string;
+  title: string;
+  description: string;
+  start_date: string;
+  end_date: string;
+  reason: string;
+  leave_type: "Sick" | "Vacation" | "Personal"; // e.g. "Sick", "Casual", "Earned"
+  req_status?: "Pending" | "Approved" | "Rejected"; // defaults to "Pending"
+  approver_id?: string | null; // optional
+}) => {
+  try {
+    const response = await fetch("http://localhost:5000/api/leave", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...data,
+        approver_id: data.approver_id ?? null, // ✅ stays null until approved
+        req_status: data.req_status ?? "Pending", // ✅ default
+      }),
+    });
+
+    if (!response.ok) {
+      const errData = await response.json();
+      throw new Error(errData.msg || "Failed to create leave request");
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Error creating leave request:", error);
     throw error;
   }
 };
